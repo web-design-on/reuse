@@ -54,7 +54,7 @@ export default function TabLayout() {
           backgroundColor: bgColor,
           borderTopWidth: 1,
           borderTopColor: borderColor,
-          height: Platform.OS === 'ios' ? 88 : 70,
+          height: Platform.OS === 'ios' ? 88 : 58,
           paddingBottom: Platform.OS === 'ios' ? 25 : 0,
           elevation: 0,
           shadowOpacity: 0,

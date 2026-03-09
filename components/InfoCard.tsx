@@ -1,11 +1,11 @@
 import ThemedButton from "@/components/themed-button";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Image, StyleSheet } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 
 export default function InfoCard() {
   return (
-    <ThemedView style={styles.card}>
+    <View style={styles.card}>
 
       <Image
         source={require("@/assets/images/header1.png")}
@@ -27,42 +27,34 @@ export default function InfoCard() {
 
       </ThemedView>
 
-    </ThemedView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
- card: {
-  backgroundColor: "white",
-  borderRadius: 20,
-  margin: 20,
-  width: "100%",
-
-  overflow: "hidden",
-
-  shadowColor: "#000",
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.1,
-  shadowRadius: 30,
-  elevation: 3
-},
-
+  card: {
+    borderRadius: 20,
+    width: "100%",
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 30,
+    elevation: 3,
+  },
   image: {
-   width: "100%",
-   height: 320,
+    width: "100%",
+    height: 240,
   },
-
   text: {
-   fontSize: 18,
-   fontWeight: "500",
-   lineHeight: 26,
-   textAlign: "center",
-   marginBottom: 16,
-   fontFamily: "Poppins_400Regular"
+    fontSize: 16,
+    fontWeight: "500",
+    lineHeight: 26,
+    textAlign: "center",
+    marginBottom: 16,
+    fontFamily: "Poppins_400Regular"
   },
-
   content: {
-  padding: 50
-},
-
+    padding: 16,
+  },
 });
