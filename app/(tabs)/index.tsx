@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     width: 250,
     height: 250,
     marginBottom: 10,
+    marginTop: -80,
     resizeMode: "contain",
   },
 
