@@ -30,14 +30,14 @@ export default function TabLayout() {
     Poppins_600SemiBold,
   });
 
-  if (!fontsLoaded) {
-    return null;
-  }
-
   const activeColor = useThemeColor({}, 'text');
   const inactiveColor = useThemeColor({}, 'tint');
   const bgColor = useThemeColor({}, 'background');
   const borderColor = '#E5E5E5';
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <Tabs
