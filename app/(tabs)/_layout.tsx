@@ -6,6 +6,23 @@ import { Tabs } from 'expo-router';
 import { ComponentProps } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
+function TabIcon({
+  name,
+  color,
+  focused
+}: {
+  name: ComponentProps<typeof Ionicons>['name'];
+  color: string;
+  focused: boolean
+}) {
+  return (
+    <View style={styles.iconContainer}>
+      <Ionicons name={name} size={26} color={color} />
+      {focused && <View style={[styles.indicator, { backgroundColor: color }]} />}
+    </View>
+  );
+}
+
 export default function TabLayout() {
 
   const [fontsLoaded] = useFonts({
@@ -25,7 +42,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: true, 
+        headerShown: false,
         tabBarActiveTintColor: activeColor,
         tabBarInactiveTintColor: inactiveColor,
         tabBarShowLabel: false,
@@ -33,26 +50,26 @@ export default function TabLayout() {
           justifyContent: 'center',
           alignItems: 'center',
         },
-        tabBarStyle: { 
-          backgroundColor: bgColor, 
-          borderTopWidth: 1, 
+        tabBarStyle: {
+          backgroundColor: bgColor,
+          borderTopWidth: 1,
           borderTopColor: borderColor,
-          height: Platform.OS === 'ios' ? 88 : 70, 
+          height: Platform.OS === 'ios' ? 88 : 70,
           paddingBottom: Platform.OS === 'ios' ? 25 : 0,
           elevation: 0,
           shadowOpacity: 0,
         },
       }}>
-      
+
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
           tabBarIcon: ({ focused }) => (
-            <TabIcon 
-              name={focused ? 'home' : 'home-outline'} 
-              color={focused ? activeColor : inactiveColor} 
-              focused={focused} 
+            <TabIcon
+              name={focused ? 'home' : 'home-outline'}
+              color={focused ? activeColor : inactiveColor}
+              focused={focused}
             />
           ),
         }}
@@ -63,10 +80,10 @@ export default function TabLayout() {
         options={{
           title: 'Favoritos',
           tabBarIcon: ({ focused }) => (
-            <TabIcon 
-              name={focused ? 'heart' : 'heart-outline'} 
-              color={focused ? activeColor : inactiveColor} 
-              focused={focused} 
+            <TabIcon
+              name={focused ? 'heart' : 'heart-outline'}
+              color={focused ? activeColor : inactiveColor}
+              focused={focused}
             />
           ),
         }}
@@ -77,10 +94,10 @@ export default function TabLayout() {
         options={{
           title: 'Mensagens',
           tabBarIcon: ({ focused }) => (
-            <TabIcon 
-              name={focused ? 'mail' : 'mail-outline'} 
-              color={focused ? activeColor : inactiveColor} 
-              focused={focused} 
+            <TabIcon
+              name={focused ? 'mail' : 'mail-outline'}
+              color={focused ? activeColor : inactiveColor}
+              focused={focused}
             />
           ),
         }}
@@ -91,10 +108,10 @@ export default function TabLayout() {
         options={{
           title: 'Carrinho',
           tabBarIcon: ({ focused }) => (
-            <TabIcon 
-              name={focused ? 'bag-handle' : 'bag-handle-outline'} 
-              color={focused ? activeColor : inactiveColor} 
-              focused={focused} 
+            <TabIcon
+              name={focused ? 'bag-handle' : 'bag-handle-outline'}
+              color={focused ? activeColor : inactiveColor}
+              focused={focused}
             />
           ),
         }}
@@ -105,32 +122,15 @@ export default function TabLayout() {
         options={{
           title: 'Perfil',
           tabBarIcon: ({ focused }) => (
-            <TabIcon 
-              name={focused ? 'person' : 'person-outline'} 
-              color={focused ? activeColor : inactiveColor} 
-              focused={focused} 
+            <TabIcon
+              name={focused ? 'person' : 'person-outline'}
+              color={focused ? activeColor : inactiveColor}
+              focused={focused}
             />
           ),
         }}
       />
     </Tabs>
-  );
-}
-
-function TabIcon({ 
-  name, 
-  color, 
-  focused 
-}: { 
-  name: ComponentProps<typeof Ionicons>['name']; 
-  color: string; 
-  focused: boolean 
-}) {
-  return (
-    <View style={styles.iconContainer}>
-      <Ionicons name={name} size={26} color={color} />
-      {focused && <View style={[styles.indicator, { backgroundColor: color }]} />}
-    </View>
   );
 }
 

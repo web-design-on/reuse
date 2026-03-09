@@ -1,5 +1,4 @@
 import InfoCard from "@/components/InfoCard";
-import ThemedButton from "@/components/themed-button";
 import { ThemedView } from "@/components/themed-view";
 import { Image, StyleSheet, View } from "react-native";
 
@@ -14,13 +13,6 @@ export default function Index() {
 
   <View style={styles.cardArea}>
     <InfoCard />
-  </View>
-
-  <View style={styles.buttonContainer}>
-    <ThemedButton
-      title="Hello, Button!"
-      onPress={() => alert("Hello, Dev!")}
-    />
   </View>
 
   </ThemedView>
