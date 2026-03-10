@@ -22,6 +22,8 @@ const styles = StyleSheet.create({
   logo: {
     width: 250,
     height: 90,
+    marginTop: 70,
+    marginBottom: 40,
     marginHorizontal: "auto",
     resizeMode: "contain",
   },
