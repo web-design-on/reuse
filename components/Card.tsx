@@ -3,30 +3,37 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Image, StyleSheet, View } from "react-native";
 
-export default function InfoCard() {
+interface CardProps {
+  title: string;
+  image: any;
+  buttonTitle?: string;
+  onPress?: () => void;
+}
+
+export default function Card({
+  title,
+  image,
+  buttonTitle = "Saiba mais",
+  onPress,
+}: CardProps) {
   return (
     <View style={styles.card}>
-
       <Image
-        source={require("@/assets/images/header1.png")}
+        source={image}
         style={styles.image}
         resizeMode="cover"
       />
 
       <ThemedView style={styles.content}>
-
         <ThemedText style={styles.text}>
-          Milhares de produtos são descartados todos os dias enquanto outras pessoas precisam deles.
-          Conectamos essas pontas, incentivando a reutilização e o consumo consciente.
+          {title}
         </ThemedText>
 
         <ThemedButton
-          title="Vamos começar"
-          onPress={() => alert("Bem-vindo ao ReUse!")}
+          title={buttonTitle}
+          onPress={onPress}
         />
-
       </ThemedView>
-
     </View>
   );
 }
@@ -34,7 +41,7 @@ export default function InfoCard() {
 const styles = StyleSheet.create({
   card: {
     borderRadius: 20,
-    width: "100%",
+    width: 230,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -44,15 +51,14 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 240,
+    height: 200,
   },
   text: {
     fontSize: 16,
     fontWeight: "500",
-    lineHeight: 26,
-    textAlign: "center",
-    marginBottom: 16,
-    fontFamily: "Poppins_400Regular"
+    fontFamily: "Poppins_400Regular",
+    marginBottom: 12,
+    minHeight: 80
   },
   content: {
     padding: 16,
