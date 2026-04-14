@@ -42,12 +42,7 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 20,
     width: 230,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 30,
-    elevation: 3,
+    overflow: "hidden"
   },
   image: {
     width: "100%",

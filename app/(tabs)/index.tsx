@@ -1,28 +1,24 @@
 import CardsCarousel from "@/components/CardsCarousel";
-import { StyleSheet, View } from "react-native";
+import ProductsCarousel from "@/components/ProductsCarousel";
+import { MOCK_PRODUCTS } from "@/constants/products";
+import { ScrollView, StyleSheet } from "react-native";
 
 export default function Index() {
   const items = [
     {
       id: 1,
       title: "Conheça a história por trás da ReUse!",
-      image: require("@/assets/images/header1.png"),
+      image: require("@/assets/images/header3.png"),
       buttonTitle: "Saiba mais",
     },
     {
       id: 2,
-      title: "Recicle e ganhe pontos com nossas parcerias",
-      image: require("@/assets/images/header1.png"),
-      buttonTitle: "Participar",
-    },
-    {
-      id: 3,
       title: "Encontre produtos sustentáveis perto de você",
-      image: require("@/assets/images/header1.png"),
+      image: require("@/assets/images/header2.png"),
       buttonTitle: "Saiba mais",
     },
     {
-      id: 4,
+      id: 3,
       title: "Junte-se à comunidade eco-friendly",
       image: require("@/assets/images/header1.png"),
       buttonTitle: "Saiba mais",
@@ -34,9 +30,11 @@ export default function Index() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <CardsCarousel items={items} onCardPress={handleCardPress} />
-    </View>
+
+      <ProductsCarousel products={MOCK_PRODUCTS}/>
+    </ScrollView>
   );
 }
 
