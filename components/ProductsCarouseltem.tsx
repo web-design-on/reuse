@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from 'expo-router';
 import { useEffect, useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, { ZoomIn } from "react-native-reanimated";
@@ -24,6 +25,7 @@ interface ProductsCarouselItemProps {
 
 export default function ProductsCarouselItem({ product }: ProductsCarouselItemProps) {
     const [isFav, setIsFav] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const checkIfFavorited = async () => {
@@ -59,52 +61,61 @@ export default function ProductsCarouselItem({ product }: ProductsCarouselItemPr
         }
     };
 
+    const handlePress = (item: any) => {
+        router.push({
+            pathname: "/details" as any,
+            params: { ...item, images: Array.isArray(item.images) ? item.images.join(',') : item.images }
+        });
+    };
+
     return (
         <ThemedView style={styles.card}>
-            <View style={styles.imageContainer}>
-                <Image
-                    source={{ uri: product.images[0] }}
-                    style={styles.image}
-                />
-                <View style={styles.topBadges}>
-                    <TouchableOpacity 
-                        onPress={toggleFavorite}
-                        style={styles.favBtn}
-                    >
-                        <Animated.View
-                            key={isFav ? "fav-on" : "fav-off"}
-                            entering={ZoomIn.duration(300)}
+            <TouchableOpacity onPress={() => handlePress(product)}>
+                <View style={styles.imageContainer}>
+                    <Image
+                        source={{ uri: product.images[0] }}
+                        style={styles.image}
+                    />
+                    <View style={styles.topBadges}>
+                        <TouchableOpacity
+                            onPress={toggleFavorite}
+                            style={styles.favBtn}
                         >
-                            <Ionicons
-                                name={isFav ? "heart" : "heart-outline"}
-                                size={18}
-                                color={isFav ? "#ff4d4d" : "#000"}
-                            />
-                        </Animated.View>
-                    </TouchableOpacity>
+                            <Animated.View
+                                key={isFav ? "fav-on" : "fav-off"}
+                                entering={ZoomIn.duration(300)}
+                            >
+                                <Ionicons
+                                    name={isFav ? "heart" : "heart-outline"}
+                                    size={18}
+                                    color={isFav ? "#ff4d4d" : "#000"}
+                                />
+                            </Animated.View>
+                        </TouchableOpacity>
 
-                    <ThemedView style={styles.locationBadge}>
-                        <ThemedText style={styles.location}>
-                            📍 {product.location}
-                        </ThemedText>
-                    </ThemedView>
+                        <ThemedView style={styles.locationBadge}>
+                            <ThemedText style={styles.location}>
+                                📍 {product.location}
+                            </ThemedText>
+                        </ThemedView>
+                    </View>
                 </View>
-            </View>
 
-            <ThemedView style={styles.content}>
-                <ThemedText style={styles.name} numberOfLines={2}>
-                    {product.name}
-                </ThemedText>
+                <ThemedView style={styles.content}>
+                    <ThemedText style={styles.name} numberOfLines={2}>
+                        {product.name}
+                    </ThemedText>
 
-                <ThemedText style={styles.description} numberOfLines={2}>
-                    {product.description}
-                </ThemedText>
+                    <ThemedText style={styles.description} numberOfLines={2}>
+                        {product.description}
+                    </ThemedText>
 
-                <ThemedText style={styles.price}>
-                    R$ {product.price}
-                </ThemedText>
+                    <ThemedText style={styles.price}>
+                        R$ {product.price}
+                    </ThemedText>
 
-            </ThemedView>
+                </ThemedView>
+            </TouchableOpacity>
         </ThemedView>
     );
 }
