@@ -1,5 +1,5 @@
 import { Dimensions, FlatList, StyleSheet, View } from "react-native";
-import ItemShowcase from "./ProductsCarouseltem";
+import ProductsCarouselItem from "./ProductsCarouseltem";
 import { ThemedText } from "./themed-text";
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -44,7 +44,7 @@ export default function ProductsCarousel({
               marginHorizontal: 8,
             }}
           >
-            <ItemShowcase product={item} />
+            <ProductsCarouselItem product={item} />
           </View>
         )}
         keyExtractor={(item) => item.id}
