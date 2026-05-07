@@ -10,18 +10,13 @@ import {
   FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useProducts } from '@/hooks/use-Products';
+import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 
 const BLUE = '#4F40E2';
 
-const recentlyViewed = [
-  { id: '1', source: require('../../assets/images/seen1.png') },
-  { id: '2', source: require('../../assets/images/seen2.png') },
-  { id: '3', source: require('../../assets/images/seen3.png') },
-  { id: '4', source: require('../../assets/images/seen4.png') },
-  { id: '5', source: require('../../assets/images/seen5.png') },
-];
 
 const stories = [
   { id: '1', source: require('../../assets/images/following1.png'), isLive: true },
@@ -32,6 +27,20 @@ const stories = [
 
 export default function ProfileScreen() {
   const [activeOrder, setActiveOrder] = useState('pay');
+  const router = useRouter();
+  const { data: recentProducts, isLoading } = useProducts();
+
+  const handleProductPress = (item: any) => {
+    router.push({
+      pathname: "/details" as any,
+      params: {
+        ...item,
+        images: Array.isArray(item.images) ? item.images.join(',') : (item.images || item.thumbnail),
+        tags: Array.isArray(item.tags) ? item.tags.join(',') : item.tags,
+        dimensions: typeof item.dimensions === 'object' ? JSON.stringify(item.dimensions) : item.dimensions
+      }
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -83,18 +92,30 @@ export default function ProfileScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Visto recentemente</Text>
-          <FlatList
-            data={recentlyViewed}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={{ gap: 10, paddingVertical: 10 }}
-            renderItem={({ item }) => (
-              <View style={styles.recentAvatarContainer}>
-                <Image source={item.source} style={styles.recentAvatar} />
-              </View>
-            )}
-          />
+          {isLoading ? (
+            <Text style={{ marginTop: 10, color: '#888' }}>Carregando...</Text>
+          ) : (
+            <FlatList
+              data={recentProducts}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item) => item?.id?.toString()}
+              contentContainerStyle={{ gap: 10, paddingVertical: 10 }}
+              renderItem={({ item }) => {
+                const imageUrl = Array.isArray(item.images) 
+                  ? item.images[0] 
+                  : (typeof item.images === 'string' ? item.images.split(',')[0] : item.thumbnail);
+                  
+                return (
+                  <TouchableOpacity onPress={() => handleProductPress(item)}>
+                    <View style={styles.recentAvatarContainer}>
+                      <Image source={{ uri: imageUrl }} style={styles.recentAvatar} />
+                    </View>
+                  </TouchableOpacity>
+                );
+              }}
+            />
+          )}
         </View>
 
         <View style={styles.section}>

@@ -1,9 +1,12 @@
 import CardsCarousel from "@/components/CardsCarousel";
 import ProductsCarousel from "@/components/ProductsCarousel";
-import { MOCK_PRODUCTS } from "@/constants/products";
-import { ScrollView, StyleSheet } from "react-native";
+import { useProducts } from "@/hooks/use-Products";
+import { ScrollView, StyleSheet, ActivityIndicator, View, Text } from "react-native";
 
 export default function Index() {
+
+  const { data: products, isLoading, error } = useProducts();
+
   const items = [
     {
       id: 1,
@@ -33,7 +36,18 @@ export default function Index() {
     <ScrollView style={styles.container}>
       <CardsCarousel items={items} onCardPress={handleCardPress} />
 
-      <ProductsCarousel products={MOCK_PRODUCTS}/>
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#00ff00" />
+        </View>
+      ) : error ? (
+        <View style={styles.loadingContainer}>
+          <Text>Erro ao carregar produtos sustentáveis.</Text>
+        </View>
+      ) : (
+        /* O seu componente agora recebe os dados da API em vez do MOCK */
+        <ProductsCarousel products={products} />
+      )}
     </ScrollView>
   );
 }
@@ -41,5 +55,11 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
+    paddingTop: 35
   },
+  loadingContainer: {
+    padding: 20,
+    alignItems: "center"
+  }
 });

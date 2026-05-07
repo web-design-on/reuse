@@ -4,16 +4,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { MOCK_PRODUCTS } from '../../constants/products';
+import { ActivityIndicator, Dimensions, FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useProducts } from '@/hooks/use-Products';import { Ionicons } from '@expo/vector-icons';
+
 
 const { width } = Dimensions.get('window');
 
+const categoryTranslations: Record<string, string> = {
+  beauty: 'Beleza',
+  fragrances: 'Fragrâncias',
+  furniture: 'Móveis',
+  groceries: 'Mercado'
+} 
+
+const translateCategory = (category: string) => {
+  return categoryTranslations[category.toLowerCase()] || category;
+};
+
+
 export default function FavoritesScreen() {
-  const [activeTab, setActiveTab] = useState<'recent' | 'saved'>('recent');
+  const [activeTab, setActiveTab] = useState<'categories' | 'saved'>('categories');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [savedFavorites, setSavedFavorites] = useState<any[]>([]);
   const isFocused = useIsFocused();
   const router = useRouter();
+
+  const { data: recentProducts, isLoading } = useProducts();
 
   const loadSavedItems = async () => {
     try {
@@ -27,11 +43,20 @@ export default function FavoritesScreen() {
   const handlePress = (item: any) => {
     router.push({
       pathname: "/details" as any,
-      params: { ...item, images: Array.isArray(item.images) ? item.images.join(',') : item.images }
+      params: { 
+        ...item, 
+        images: Array.isArray(item.images) ? item.images.join(',') : (item.images || item.thumbnail),
+        tags: Array.isArray(item.tags) ? item.tags.join(',') : item.tags,
+        dimensions: typeof item.dimensions === 'object' ? JSON.stringify(item.dimensions) : item.dimensions
+        }
     });
   };
 
-  const dataToDisplay = activeTab === 'recent' ? MOCK_PRODUCTS : savedFavorites;
+  const categoriesList = Array.from(new Set((recentProducts || []).map((p: any) => p.category))).filter(Boolean);
+
+  const dataToDisplay = activeTab === 'categories'
+  ? (recentProducts || []).filter((p: any) => !selectedCategory || p.category === selectedCategory) 
+  : savedFavorites;
 
   return (
     <ThemedView style={styles.container}>
@@ -39,10 +64,10 @@ export default function FavoritesScreen() {
 
       <View style={styles.tabContainer}>
         <TouchableOpacity 
-          style={[styles.tabButton, activeTab === 'recent' && styles.activeTabBorder]}
-          onPress={() => setActiveTab('recent')}
+          style={[styles.tabButton, activeTab === 'categories' && styles.activeTabBorder]}
+          onPress={() => setActiveTab('categories')}
         >
-          <ThemedText style={[styles.tabText, activeTab === 'recent' && styles.activeTabText]}>Recentes</ThemedText>
+          <ThemedText style={[styles.tabText, activeTab === 'categories' && styles.activeTabText]}>Categorias</ThemedText>
         </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.tabButton, activeTab === 'saved' && styles.activeTabBorder]}
@@ -52,27 +77,72 @@ export default function FavoritesScreen() {
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={dataToDisplay}
-        numColumns={2}
-        keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
-        columnWrapperStyle={styles.row}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.card} onPress={() => handlePress(item)}>
-            <View style={styles.imageContainer}>
-              <Image source={{ uri: Array.isArray(item.images) ? item.images[0] : item.images.split(',')[0] }} style={styles.image} />
-            </View>
-            <ThemedText style={styles.productName} numberOfLines={1}>{item.name}</ThemedText>
-            <ThemedText type="defaultSemiBold">R$ {item.price}</ThemedText>
-          </TouchableOpacity>
-        )}
-      />
+      {activeTab === 'categories' && !selectedCategory ? (
+        <FlatList
+          data={categoriesList as string[]}
+          keyExtractor={(item) => item}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <TouchableOpacity 
+                  style={styles.categoryCard} 
+                  onPress={() => setSelectedCategory(item)}
+                >
+                  <ThemedText style={styles.categoryText}>{translateCategory(item).toUpperCase()}</ThemedText>
+                  <Ionicons name="chevron-forward" size={20} color="#4F40E2" />
+                </TouchableOpacity>
+              )}
+              ListEmptyComponent={
+                <ThemedText style={{ textAlign: 'center', marginTop: 20, color: '#888' }}>
+                  Nenhuma categoria encontrada.
+                </ThemedText>
+              }
+            />
+          ) : (
+            <>
+            {activeTab === 'categories' && selectedCategory && (
+                <TouchableOpacity style={styles.backButton} onPress={() => setSelectedCategory(null)}>
+                  <Ionicons name="arrow-back" size={20} color="#4F40E2" />
+                  <ThemedText style={styles.backButtonText}>Voltar para Categorias</ThemedText>
+                </TouchableOpacity>
+              )}
+              <FlatList
+                key={`grid-${activeTab}-${selectedCategory || 'saved'}`} 
+                data={dataToDisplay}
+                numColumns={2}
+                keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
+                columnWrapperStyle={styles.row}
+                showsVerticalScrollIndicator={false}
+                renderItem={({ item }) => {
+                  const imageUrl = Array.isArray(item.images) 
+                    ? item.images[0] 
+                    : (typeof item.images === 'string' ? item.images.split(',')[0] : item.thumbnail);
+                  const title = item.title || item.name;
+
+                  return (
+                    <TouchableOpacity style={styles.card} onPress={() => handlePress(item)}>
+                      <View style={styles.imageContainer}>
+                        {imageUrl && <Image source={{ uri: imageUrl }} style={styles.image} />}
+                      </View>
+                      <ThemedText style={styles.productName} numberOfLines={1}>{title}</ThemedText>
+                      <ThemedText type="defaultSemiBold">R$ {item.price}</ThemedText>
+                    </TouchableOpacity>
+                  )
+                }}
+                ListEmptyComponent={
+                  <ThemedText style={{ textAlign: 'center', marginTop: 20, color: '#888' }}>
+                    Nenhum item encontrado.
+                  </ThemedText>
+                }
+              />
+            </>
+      )}
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 15, paddingTop: 60 },
+  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   headerTitle: { marginBottom: 20, fontSize: 24, fontWeight: 'bold' },
   tabContainer: { flexDirection: 'row', marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#eee' },
   tabButton: { flex: 1, paddingVertical: 12, alignItems: 'center' },
@@ -83,5 +153,29 @@ const styles = StyleSheet.create({
   card: { width: (width / 2) - 25 },
   imageContainer: { width: '100%', height: 180, borderRadius: 12, backgroundColor: '#f0f0f0', overflow: 'hidden', marginBottom: 8 },
   image: { width: '100%', height: '100%', resizeMode: 'cover' },
-  productName: { fontSize: 14, marginBottom: 4 }
+  productName: { fontSize: 14, marginBottom: 4 },
+  categoryCard: {
+    backgroundColor: 'rgba(79, 64, 226, 0.15)',
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  categoryText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#4F40E2'
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+    gap: 5
+  },
+  backButtonText: {
+    color: '#4F40E2',
+    fontWeight: '600'
+  }
 });

@@ -64,7 +64,10 @@ export default function ProductsCarouselItem({ product }: ProductsCarouselItemPr
     const handlePress = (item: any) => {
         router.push({
             pathname: "/details" as any,
-            params: { ...item, images: Array.isArray(item.images) ? item.images.join(',') : item.images }
+            params: { ...item, images: Array.isArray(item.images) ? item.images.join(',') : item.images,
+                tags: Array.isArray(item.tags) ? item.tags.join(',') : item.tags,
+        dimensions: typeof item.dimensions === 'object' ? JSON.stringify(item.dimensions) : item.dimensions
+             }
         });
     };
 
