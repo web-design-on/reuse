@@ -1,3 +1,4 @@
+import { clearTokens } from '@/lib/api';
 import { AuthResponse } from '@/types/user';
 import * as SecureStore from 'expo-secure-store';
 import React, { createContext, useContext, useEffect, useState } from 'react';
@@ -44,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function signOut() {
     await SecureStore.deleteItemAsync('session');
-
+    await clearTokens();
     setUser(null);
   }
 
