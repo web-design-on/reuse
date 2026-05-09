@@ -1,6 +1,7 @@
 
 import { authenticateUser } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
     Dimensions,
@@ -19,11 +20,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const { width, height } = Dimensions.get('window');
 
 export default function Loginscreen() {
-    const [email, setEmail] = useState('');
+    const [userName, setUserName] = useState('');
     const [senha, setSenha] = useState('');
+    const router = useRouter();
 
     const handleEntrar = () => {
-        if (!email.trim() || !senha.trim()) {
+        if (!userName.trim() || !senha.trim()) {
             alert("Por favor, preencha todos os campos.");
             return;
         }
@@ -32,9 +34,11 @@ export default function Loginscreen() {
     };
 
     const mutation = useMutation({
-        mutationFn: () => authenticateUser(email, senha),
+        mutationFn: () => authenticateUser(userName, senha),
         onSuccess: (data) => {
-            alert(`Bem-vindo, ${data.firstName}!`);
+            setUserName('');
+            setSenha('');
+            router.replace('/(tabs)');
         },
         onError: (error) => {
             alert(error instanceof Error ? error.message : "Ops... Algo deu errado. Tente novamente mais tarde.");
@@ -88,11 +92,10 @@ export default function Loginscreen() {
                     <View style={styles.form}>
                         <TextInput
                             style={styles.input}
-                            placeholder="E-mail"
+                            placeholder="Usuário"
                             placeholderTextColor="#aaa"
-                            value={email}
-                            onChangeText={setEmail}
-                            keyboardType="email-address"
+                            value={userName}
+                            onChangeText={setUserName}
                             autoCapitalize="none"
                             autoCorrect={false}
                         />
