@@ -75,11 +75,7 @@ export async function authenticateUser(username: string, password: string): Prom
         throw new Error("Ops... Algo deu errado. Tente novamente mais tarde.");
     }
     
-    const authData: AuthResponse = await response.json();
-    
-    await storeTokens(authData.accessToken, authData.refreshToken);
-    
-    return authData;
+    return response.json();
 }
 
 export async function refreshAccessToken(): Promise<string | null> {

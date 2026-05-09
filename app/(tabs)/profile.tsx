@@ -1,8 +1,8 @@
+import ThemedButton from '@/components/themed-button';
+import { useAuth } from '@/contexts/AuthContext';
 import { useProducts } from '@/hooks/use-Products';
-import { fetchUserData } from '@/lib/api';
-import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -28,8 +28,21 @@ const stories = [
 ];
 
 export default function ProfileScreen() {
-  const [activeOrder, setActiveOrder] = useState('pay');
   const router = useRouter();
+
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/(auth)/login');
+    }
+  }, [user, loading]);
+
+  if (!user) {
+    return null;
+  }
+
+  const [activeOrder, setActiveOrder] = useState('pay');
   const { data: recentProducts, isLoading } = useProducts();
 
   const handleProductPress = (item: any) => {
@@ -44,17 +57,19 @@ export default function ProfileScreen() {
     });
   };
 
-  const { data } = useQuery({
-    queryKey: ['userId', 1],
-    queryFn: () => fetchUserData(1)
-  });
+  const { signOut } = useAuth();  
+
+  const logoutUserHandler = () => {
+    signOut();
+    router.replace('/(auth)/login');
+  }
 
   return (
     <SafeAreaView style={styles.container}>
 
       <View style={styles.header}>
         <Image
-          source={data?.image ? { uri: data.image } : require('../../assets/images/user.jpg')}
+          source={user?.image ? { uri: user.image } : require('../../assets/images/user.jpg')}
           style={styles.avatarHeader}
         />
 
@@ -81,7 +96,7 @@ export default function ProfileScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
 
         <View style={styles.section}>
-          <Text style={styles.greeting}>Olá, {data?.firstName}!</Text>
+          <Text style={styles.greeting}>Olá, {user?.firstName}!</Text>
         </View>
 
         <View style={styles.announcementCard}>
@@ -178,13 +193,15 @@ export default function ProfileScreen() {
               </View>
             )}
           />
-        </View>
+
+        <ThemedButton title='Sair' onPress={logoutUserHandler}/>
+
+        </View>        
+        
 
         <View style={{ height: 30 }} />
+
       </ScrollView>
-
-
-
     </SafeAreaView>
   );
 }

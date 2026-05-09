@@ -1,4 +1,5 @@
 
+import { useAuth } from '@/contexts/AuthContext';
 import { authenticateUser } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
@@ -19,10 +20,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
-export default function Loginscreen() {
+export default function Login() {
     const [userName, setUserName] = useState('');
     const [senha, setSenha] = useState('');
     const router = useRouter();
+
+    const { signIn } = useAuth();
 
     const handleEntrar = () => {
         if (!userName.trim() || !senha.trim()) {
@@ -35,18 +38,27 @@ export default function Loginscreen() {
 
     const mutation = useMutation({
         mutationFn: () => authenticateUser(userName, senha),
-        onSuccess: (data) => {
+
+        onSuccess: async (data) => {
+            await signIn(data);
+
             setUserName('');
             setSenha('');
+
             router.replace('/(tabs)');
         },
+
         onError: (error) => {
-            alert(error instanceof Error ? error.message : "Ops... Algo deu errado. Tente novamente mais tarde.");
+            alert(
+                error instanceof Error
+                    ? error.message
+                    : "Ops... Algo deu errado. Tente novamente mais tarde."
+            );
         },
     });
 
     const handleCancelar = () => {
-        console.log('Cancelado');
+        router.replace('/(tabs)');
     };
 
     return (
@@ -167,7 +179,7 @@ const styles = StyleSheet.create({
     bubble04: {
         position: 'absolute',
         top: -50,
-        left:200,
+        left: 200,
         width: width * 0.55,
         height: width * 3.00,
         zIndex: 0,
