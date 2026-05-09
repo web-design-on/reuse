@@ -1,16 +1,18 @@
 
+import { authenticateUser } from '@/lib/api';
+import { useMutation } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import {
-    View,
+    Dimensions,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    StatusBar,
+    StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
-    StyleSheet,
-    StatusBar,
-    Dimensions,
-    KeyboardAvoidingView,
-    Platform,
-    Image,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -21,8 +23,23 @@ export default function Loginscreen() {
     const [senha, setSenha] = useState('');
 
     const handleEntrar = () => {
-        console.log('Login:', email, senha);
+        if (!email.trim() || !senha.trim()) {
+            alert("Por favor, preencha todos os campos.");
+            return;
+        }
+
+        mutation.mutate();
     };
+
+    const mutation = useMutation({
+        mutationFn: () => authenticateUser(email, senha),
+        onSuccess: (data) => {
+            alert(`Bem-vindo, ${data.firstName}!`);
+        },
+        onError: (error) => {
+            alert(error instanceof Error ? error.message : "Ops... Algo deu errado. Tente novamente mais tarde.");
+        },
+    });
 
     const handleCancelar = () => {
         console.log('Cancelado');
