@@ -1,17 +1,19 @@
+import { useProducts } from '@/hooks/use-Products';
+import { fetchUserData } from '@/lib/api';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Image,
   Dimensions,
   FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useProducts } from '@/hooks/use-Products';
-import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 
@@ -42,18 +44,23 @@ export default function ProfileScreen() {
     });
   };
 
+  const { data } = useQuery({
+    queryKey: ['userId', 1],
+    queryFn: () => fetchUserData(1)
+  });
+
   return (
     <SafeAreaView style={styles.container}>
 
       <View style={styles.header}>
         <Image
-          source={require('../../assets/images/user.jpg')}
+          source={data?.image ? { uri: data.image } : require('../../assets/images/user.jpg')}
           style={styles.avatarHeader}
         />
 
-        <TouchableOpacity style={styles.btnActivity} activeOpacity={0.85}>
+        <Text style={styles.btnActivity}>
           <Text style={styles.btnActivityText}>Meu perfil</Text>
-        </TouchableOpacity>
+        </Text>
 
         <View style={styles.headerIcons}>
           <TouchableOpacity>
@@ -74,7 +81,7 @@ export default function ProfileScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
 
         <View style={styles.section}>
-          <Text style={styles.greeting}>Olá, Pedro!</Text>
+          <Text style={styles.greeting}>Olá, {data?.firstName}!</Text>
         </View>
 
         <View style={styles.announcementCard}>
@@ -205,6 +212,7 @@ const styles = StyleSheet.create({
     backgroundColor: BLUE,
     borderRadius: 24,
     paddingVertical: 10,
+    textAlign: 'center',
     alignItems: 'center',
   },
   btnActivityText: {
