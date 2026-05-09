@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { FlatList, Image, KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface Message {
   id: string;
@@ -56,7 +56,7 @@ export default function MessagesScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       {/* Cabeçalho de Contexto */}
       <ThemedView style={styles.header}>
         <ThemedText type="defaultSemiBold">Chat: Reutilização de Item</ThemedText>
@@ -98,7 +98,7 @@ export default function MessagesScreen() {
           </TouchableOpacity>
         </ThemedView>
       </KeyboardAvoidingView>
-    </ThemedView>
+    </View>
   );
 }
 

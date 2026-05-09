@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { FlatList, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
 
 export default function CartScreen() {
   const [cartItems, setCartItems] = useState<any[]>([]);
@@ -33,38 +33,35 @@ export default function CartScreen() {
   }, [isFocused]);
 
   return (
-    <ThemedView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.header}>
           <ThemedText type="title" style={styles.poppinsBold}>Meu Carrinho</ThemedText>
         </View>
-        
-        <FlatList 
+
+        <FlatList
           data={cartItems}
           contentContainerStyle={{ padding: 20 }}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item, index) => (item.id ? item.id.toString() : index.toString())}
           renderItem={({ item }) => (
-            <TouchableOpacity 
-              style={styles.cartItem}
+            <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => router.push({
                 pathname: "/details",
                 params: { ...item }
               })}
             >
-              {/* EXIBIÇÃO DA FOTO DO PRODUTO */}
-              <Image 
-                source={{ uri: Array.isArray(item.images) ? item.images[0] : item.images.split(',')[0] }} 
-                style={styles.itemImage} 
-              />
-              
-              <View style={styles.itemInfo}>
-                <ThemedText style={styles.itemName}>{item.name}</ThemedText>
-                <ThemedText style={styles.itemPrice}>R$ {item.price}</ThemedText>
-                <ThemedText style={styles.itemLocation}>
-                  {item.location || 'Portugal'}
-                </ThemedText>
-              </View>
+              <ThemedView style={styles.cartItem}>
+                <Image
+                  source={{ uri: Array.isArray(item.images) ? item.images[0] : item.images.split(',')[0] }}
+                  style={styles.itemImage}
+                />
+
+                <ThemedView style={styles.itemInfo}>
+                  <ThemedText style={styles.itemName}>{item.title}</ThemedText>
+                  <ThemedText style={styles.itemPrice}>R${item.price}</ThemedText>
+                </ThemedView>
+              </ThemedView>
             </TouchableOpacity>
           )}
           ListEmptyComponent={
@@ -74,7 +71,7 @@ export default function CartScreen() {
           }
         />
       </SafeAreaView>
-    </ThemedView>
+    </View>
   );
 }
 
@@ -86,7 +83,6 @@ const styles = StyleSheet.create({
   },
   cartItem: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
     borderRadius: 15,
     padding: 12,
     marginBottom: 15,
@@ -127,7 +123,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_700Bold',
   },
   emptyText: {
-    textAlign: 'center', 
+    textAlign: 'center',
     marginTop: 50,
     opacity: 0.5,
     fontFamily: 'Poppins_400Regular'

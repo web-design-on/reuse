@@ -1,11 +1,11 @@
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { useProducts } from '@/hooks/use-Products';
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Dimensions, FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useProducts } from '@/hooks/use-Products';import { Ionicons } from '@expo/vector-icons';
+import { Dimensions, FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 
 const { width } = Dimensions.get('window');
@@ -59,7 +59,7 @@ export default function FavoritesScreen() {
   : savedFavorites;
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <ThemedText type="title" style={styles.headerTitle}>Lista de Desejos</ThemedText>
 
       <View style={styles.tabContainer}>
@@ -136,7 +136,7 @@ export default function FavoritesScreen() {
               />
             </>
       )}
-    </ThemedView>
+    </View>
   );
 }
 

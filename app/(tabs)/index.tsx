@@ -1,7 +1,7 @@
 import CardsCarousel from "@/components/CardsCarousel";
 import ProductsCarousel from "@/components/ProductsCarousel";
 import { useProducts } from "@/hooks/use-Products";
-import { ScrollView, StyleSheet, ActivityIndicator, View, Text } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function Index() {
 
@@ -55,7 +55,6 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     paddingTop: 35
   },
   loadingContainer: {
