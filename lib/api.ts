@@ -78,7 +78,7 @@ export async function authenticateUser(username: string, password: string): Prom
     return response.json();
 }
 
-export async function refreshAccessToken(): Promise<string | null> {
+export async function refreshAccessToken(): Promise<{ accessToken: string; userData: AuthResponse } | null> {
     const refreshToken = await getRefreshToken();
     
     if (!refreshToken) {
@@ -106,7 +106,7 @@ export async function refreshAccessToken(): Promise<string | null> {
         
         await storeTokens(data.accessToken, refreshToken);
         
-        return data.accessToken;
+        return { accessToken: data.accessToken, userData: data };
     } catch (error) {
         console.error("Erro ao renovar access token:", error);
         return null;
